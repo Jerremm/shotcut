@@ -128,7 +128,7 @@ public:
         dir.cd("qt");
 #else
         dir.cd("lib");
-        dir.cd("qt5");
+        dir.cd("qt6");
 #endif
         addLibraryPath(dir.absolutePath());
         setOrganizationName("Meltytech");
@@ -224,12 +224,12 @@ public:
 
         // Log some basic info.
         LOG_INFO() << "Starting Shotcut version" << SHOTCUT_VERSION;
-#if defined (Q_OS_WIN)
-        LOG_INFO() << "Windows version" << QSysInfo::windowsVersion();
+#if defined(Q_OS_WIN)
+        LOG_INFO() << "Windows version" << QSysInfo::productVersion();
 #elif defined(Q_OS_MAC)
-        LOG_INFO() << "macOS version" << QSysInfo::macVersion();
+        LOG_INFO() << "macOS version" << QSysInfo::productVersion();
 #else
-        LOG_INFO() << "Linux version";
+        LOG_INFO() << "Linux version" << QSysInfo::productVersion();;
 #endif
         LOG_INFO() << "number of logical cores =" << QThread::idealThreadCount();
         LOG_INFO() << "locale =" << QLocale();
@@ -282,12 +282,12 @@ public:
             locale = "pt";
         else if (locale.startsWith("en_"))
             locale = "en";
-        if (qtTranslator.load("qt_" + locale, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+        if (qtTranslator.load("qt_" + locale, QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
             installTranslator(&qtTranslator);
         else if (qtTranslator.load("qt_" + locale, dir.absolutePath()))
             installTranslator(&qtTranslator);
         if (qtBaseTranslator.load("qtbase_" + locale,
-                                  QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+                                  QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
             installTranslator(&qtBaseTranslator);
         else if (qtBaseTranslator.load("qtbase_" + locale, dir.absolutePath()))
             installTranslator(&qtBaseTranslator);
@@ -321,7 +321,6 @@ int main(int argc, char **argv)
     ::qputenv("QT_LOGGING_RULES", "*.warning=false");
 #endif
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     for (int i = 1; i + 1 < argc; i++) {
         if (!::qstrcmp("--QT_SCALE_FACTOR", argv[i]) || !::qstrcmp("--QT_SCREEN_SCALE_FACTORS", argv[i])) {
             QByteArray value(argv[i + 1]);
